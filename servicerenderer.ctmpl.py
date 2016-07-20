@@ -107,6 +107,15 @@ def parse_smartstack_tags(service):
             service["smartstack_mode"] = tag.split(":")[2]
 
 
+def group_services(services):
+    grouped = {}
+    for svc in services:
+        if svc["name"] not in grouped:
+            grouped[svc["name"]] = []
+        grouped[svc["name"]].append(svc)
+    return grouped
+
+
 def main():
     global _args
     parser = argparse.ArgumentParser(
@@ -115,7 +124,7 @@ def main():
     )
     parser.add_argument("template",
                         help="The Jinja2 template to render")
-    parser.add_argument("--cmd", dest="command", required=True,
+    parser.add_argument("-c", "--command", dest="command", required=True,
                         help="The command to invoke after rendering the template. Will be executed in a shell.")
     parser.add_argument("-o", "--output", dest="output", help="The target file. Renders to stdout if not specified.")
     parser.add_argument("--has", dest="include", action="append",
@@ -139,8 +148,11 @@ def main():
     for sv in filtered:
         parse_smartstack_tags(sv)
 
+    servicegroups = group_services(filtered)
+
     context = {
         "services": filtered,
+        "servicegroups": servicegroups,
         "localip": _args.localip,
     }
 
