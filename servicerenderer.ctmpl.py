@@ -72,10 +72,8 @@ _args = None
 
 
 class SmartstackService(object):
-    def __init__(self, servicedict, protocol=None, port=None, extport=None, mode=None):
-        self.protocol = protocol
+    def __init__(self, servicedict, port=None, mode=None):
         self._port = port
-        self.extport = extport
         self.mode = mode
         self.svc = servicedict
 
@@ -290,14 +288,9 @@ def parse_smartstack_tags(service):
         if re.match("^smartstack:port:([0-9]+)$", tag):
             sv.port = int(tag.split(":")[2])
 
-        if re.match("^smartstack:extport:([0-9]+)$", tag):
-            sv.extport = int(tag.split(":")[2])
-
         if tag.startswith("smartstack:mode:"):
             sv.mode = tag.split(":")[2]
 
-        if tag.startswith("smartstack:protocol:"):
-            sv.protocol = tag.split(":")[2]
     return sv
 
 
