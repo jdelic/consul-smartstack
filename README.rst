@@ -131,7 +131,7 @@ Whenever a group of services is returned, they are wrapped in an instance of
 ``SmartstackServiceContainer``. This versatile class behaves like a ``dict``
 when it represents a number of services grouped by a common property or it
 behaves like a ``list`` when it represents an unfiltered number of services.
-Each service is itself represented by an instace of ``SmartstackService``.
+Each service is itself represented by an instance of ``SmartstackService``.
 
 ================== ===========================================================
 Attribute          Description
