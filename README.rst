@@ -22,24 +22,24 @@ Run Smartstack with consul and consul-template
 ----------------------------------------------
 Basic steps:
 
- * run consul with ``-config-dir=/etc/consul/services.d``
- * register services in consul from nodes by putting service definitions in
-    ``/etc/consul/services.d``
- * have consul-template listen to the service catalog by having a Python
-   script pose as a ``consul-template`` template using the
-   ``{{services}}`` catalog, therefor getting rerendered every time a service
-   gets added or removed
- * Said Python script is rendered and then immediately executed by
-   consul-template taking parameters and a Jinja template rerendering haproxy
-   configurations from said Jinja template and then the Python script reloads
-   or restarts haproxy
- * The included haproxy config templates define a local proxy
-   (Smartstack-like) for proxying internal services to your applications on
-   ``127.0.0.1`` and
- * an external haproxy that using the concept of consul service tags,
-   interpreted by Python, to create a loadbalancer haproxy that terminates SSL
-   and forwards traffic to apps registering themselves as consul services on
-   nodes
+* run consul with ``-config-dir=/etc/consul/services.d``
+* register services in consul from nodes by putting service definitions in
+  ``/etc/consul/services.d``
+* have consul-template listen to the service catalog by having a Python
+  script pose as a ``consul-template`` template using the
+  ``{{services}}`` catalog, therefor getting rerendered every time a service
+  gets added or removed
+* Said Python script is rendered and then immediately executed by
+  consul-template taking parameters and a Jinja template rerendering haproxy
+  configurations from said Jinja template and then the Python script reloads
+  or restarts haproxy
+* The included haproxy config templates define a local proxy
+  (Smartstack-like) for proxying internal services to your applications on
+  ``127.0.0.1`` and
+* an external haproxy that using the concept of consul service tags,
+  interpreted by Python, to create a loadbalancer haproxy that terminates SSL
+  and forwards traffic to apps registering themselves as consul services on
+  nodes
 
 
 Why not use consul-template directly for templating the haproxy configuration?
@@ -234,17 +234,17 @@ Examples
 --------
 Look at the included haproxy configuration templates for example code.
 
-  * ``haproxy-external.jinja.cfg`` is a configuration template for a HTTP(S)
-    loadbalancer supporting tag-based configuration for SNI and HTTP
-    hostname-based backend routing.
+* ``haproxy-external.jinja.cfg`` is a configuration template for a HTTP(S)
+  loadbalancer supporting tag-based configuration for SNI and HTTP
+  hostname-based backend routing.
 
-  * ``haproxy-internal.jinja.cfg`` is a configuration template for running a
-    Smartstack infrastructure on every node in a cluster routing internal
-    services from ``localhost`` on predefined ports, thereby allowing
-    applications to be ignorant of where the services they are using are
-    running.
+* ``haproxy-internal.jinja.cfg`` is a configuration template for running a
+  Smartstack infrastructure on every node in a cluster routing internal
+  services from ``localhost`` on predefined ports, thereby allowing
+  applications to be ignorant of where the services they are using are
+  running.
 
-  * ``servicerenderer-internal.conf`` a consul-template configuration example.
+* ``servicerenderer-internal.conf`` a consul-template configuration example.
 
 
 Predefined Consul service tags
