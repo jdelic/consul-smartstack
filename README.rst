@@ -17,6 +17,10 @@ instance of said service is managed by a separate system. In AirBnB's case that
 separate system is Zookeeper, Nerve and Synapse. In this implementation it's
 Consul and Consul-template.
 
+I have extracted this from
+`my Saltstack configuration <https://github.com/jdelic/saltshaker>`_ where I
+use it to push services out to nodes.
+
 
 Run Smartstack with consul and consul-template
 ----------------------------------------------
