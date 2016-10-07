@@ -2,14 +2,14 @@ Consul Smartstack
 =================
 
 This repository contains a recipe for running a AirBnB
-[Smartstack](http://nerds.airbnb.com/smartstack-service-discovery-cloud/)-like
-infrastructure, but not using [Nerve](https://github.com/airbnb/nerve) and
-[Synapse](https://github.com/airbnb/synapse), but instead using Hashicorp's
-[Consul](https://consul.io/) and
-[Consul-template](https://github.com/hashicorp/consul-template).
+`Smartstack <http://nerds.airbnb.com/smartstack-service-discovery-cloud/>`_\ -like
+infrastructure, but not using `Nerve <https://github.com/airbnb/nerve>`_ and
+`Synapse <https://github.com/airbnb/synapse>`_, but instead using Hashicorp's
+`Consul <https://consul.io/>`_ and
+`Consul-template <https://github.com/hashicorp/consul-template>`_.
 
 Summarized, Smartstack routes requests to services used by applications in a
-runtime environment by running local [haproxy](http://www.haproxy.org/)
+runtime environment by running local `haproxy <http://www.haproxy.org/>`_
 instances on each host that route tcp/udp traffic to these services.
 Applications don't distinguish between local and remote services, instead
 everything looks like a local service and routing traffic to an available
@@ -22,24 +22,24 @@ Run Smartstack with consul and consul-template
 ----------------------------------------------
 Basic steps:
 
-  * run consul with ``-config-dir=/etc/consul/services.d``
-  * register services in consul from nodes by putting service definitions in
+ * run consul with ``-config-dir=/etc/consul/services.d``
+ * register services in consul from nodes by putting service definitions in
     ``/etc/consul/services.d``
-  * have consul-template listen to the service catalog by having a Python
-    script pose as a ``consul-template`` template using the
-    ``{{services}}`` catalog, therefor getting rerendered every time a service
-    gets added or removed
-  * Said Python script is rendered and then immediately executed by
-    consul-template taking parameters and a Jinja template rerendering haproxy
-    configurations from said Jinja template and then the Python script reloads
-    or restarts haproxy
-  * The included haproxy config templates define a local proxy
-    (Smartstack-like) for proxying internal services to your applications on
-    ``127.0.0.1`` and
-  * an external haproxy that using the concept of consul service tags,
-    interpreted by Python, to create a loadbalancer haproxy that terminates SSL
-    and forwards traffic to apps registering themselves as consul services on
-    nodes
+ * have consul-template listen to the service catalog by having a Python
+   script pose as a ``consul-template`` template using the
+   ``{{services}}`` catalog, therefor getting rerendered every time a service
+   gets added or removed
+ * Said Python script is rendered and then immediately executed by
+   consul-template taking parameters and a Jinja template rerendering haproxy
+   configurations from said Jinja template and then the Python script reloads
+   or restarts haproxy
+ * The included haproxy config templates define a local proxy
+   (Smartstack-like) for proxying internal services to your applications on
+   ``127.0.0.1`` and
+ * an external haproxy that using the concept of consul service tags,
+   interpreted by Python, to create a loadbalancer haproxy that terminates SSL
+   and forwards traffic to apps registering themselves as consul services on
+   nodes
 
 
 Why not use consul-template directly for templating the haproxy configuration?
@@ -49,14 +49,14 @@ language that make this infeasible. Much of the infratructure in this
 repository depends on using consul service tags to pass information from the
 service definition in Consul to haproxy. Since consul-template's templating
 language does not support setting variables or other constructs (and the
-[developers don't want to change that](https://github.com/hashicorp/consul-template/issues/399))
+`developers don't want to change that <https://github.com/hashicorp/consul-template/issues/399>`_\ )
 an intermediate Python script is a good solution to provide a more expressive
 template language.
 
 
 Command-line arguments
 ----------------------
-`servicerenderer.ctmpl.py` as its filename suggests is a consul-template
+``servicerenderer.ctmpl.py`` as its filename suggests is a consul-template
 template that renders into a Python script. The resulting Python script is
 meant to be executed by the ``command`` directive of consul-template's template
 configuration. The script supports a number of command-line arguments modifying
