@@ -49,7 +49,7 @@ Basic steps:
 Why not use consul-template directly for templating the haproxy configuration?
 ------------------------------------------------------------------------------
 There are limits to Golang's (and by extension consul-template's) templating
-language that make this infeasible. Much of the infratructure in this
+language that make this infeasible. Much of the infrastructure in this
 repository depends on using consul service tags to pass information from the
 service definition in Consul to haproxy. Since consul-template's templating
 language does not support setting variables or other constructs (and the
