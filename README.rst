@@ -154,36 +154,36 @@ Attribute          Description
                    it was created from.
 ================== ===========================================================
 
-=========================== ==================================================
-Method                      Description
-=========================== ==================================================
-``.ungroup()``              Returns an unfiltered/ungrouped top-level
-                            ``SmartstackServiceContainer`` representing all
-                            services. This allows you to undo all previous
-                            calls to ``.group_by()`` and
-                            ``.group_by_tagvalue()``.
-``.value_set(f)``           Return a ``Set[str]`` of all values of *f* in the
-                            Consul services contained in the current container.
-                            Valid values of *f* are all fields returned in the
-                            Consul service catalog.
-``.tagvalue_set(f)``        Return a ``Set[str]`` of all tags in the list of
-                            tags on a Consul service defnition for which
-                            ``tagvalue.startswith(f) is True``.
-``group_by(f)``             Return a ``SmartstackServiceContainer`` instance
-                            which represents a
-                            ``Dict[str, SmartstackServiceContainer]`` where
-                            each existing value of field *f* in the Consul
-                            service catalog is a key resolving to a list-like
-                            container of all services where ``f == key``.
-``group_by_tagvalue(part)`` Return a ``SmartstackServiceContainer`` instance
-                            which represents a
-                            ``Dict[str, SmartstackServiceContainer]`` where
-                            the keys are all tag values that started with
-                            *part* (with *part* cut off) and the value is a
-                            list-like container containing all
-                            ``SmartstackService`` instances having a tag
-                            ``part+key``.
-=========================== ==================================================
+============================ =================================================
+Method                       Description
+============================ =================================================
+``.ungroup()``               Returns an unfiltered/ungrouped top-level
+                             ``SmartstackServiceContainer`` representing all
+                             services. This allows you to undo all previous
+                             calls to ``.group_by()`` and
+                             ``.group_by_tagvalue()``.
+``.value_set(f)``            Return a ``Set[str]`` of all values of *f* in the
+                             Consul services contained in the current
+                             container. Valid values of *f* are all fields
+                             returned in the Consul service catalog.
+``.tagvalue_set(f)``         Return a ``Set[str]`` of all tags in the list of
+                             tags on a Consul service defnition for which
+                             ``tagvalue.startswith(f) is True``.
+``.group_by(f)``             Return a ``SmartstackServiceContainer`` instance
+                             which represents a
+                             ``Dict[str, SmartstackServiceContainer]`` where
+                             each existing value of field *f* in the Consul
+                             service catalog is a key resolving to a list-like
+                             container of all services where ``f == key``.
+``.group_by_tagvalue(part)`` Return a ``SmartstackServiceContainer`` instance
+                             which represents a
+                             ``Dict[str, SmartstackServiceContainer]`` where
+                             the keys are all tag values that started with
+                             *part* (with *part* cut off) and the value is a
+                             list-like container containing all
+                             ``SmartstackService`` instances having a tag
+                             ``part+key``.
+============================ =================================================
 
 You will probably never have to use these methods, but I'll document them
 anyway:
