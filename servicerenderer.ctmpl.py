@@ -304,7 +304,7 @@ def _setup_iptables(services, ip, mode):
                 print("Port number for 'smartstack:extport:' must be an integer not %s" %
                       svc.tagvalue("smartstack:extport:"), file=sys.stderr)
                 continue
-            
+
         _protocol = svc.tagvalue("smartstack:protocol:")
         if _protocol == "udp":
             prot = "udp"
