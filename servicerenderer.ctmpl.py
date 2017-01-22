@@ -359,7 +359,8 @@ def _setup_iptables(services, ip, mode):
 def main():
     global _args
     preparser = argparse.ArgumentParser()
-    preparser.add_argument("--only-iptables", dest="only_iptables", default=False, action="store_true")
+    preparser.add_argument("--only-iptables", dest="only_iptables", default=False, action="store_true",
+                           help=argparse.SUPPRESS)
     args, _ = preparser.parse_known_args()
 
     parser = argparse.ArgumentParser(
