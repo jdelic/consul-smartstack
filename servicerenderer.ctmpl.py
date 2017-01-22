@@ -394,7 +394,7 @@ def main():
                         help="When this is set, this program will append iptables rules to the INPUT and OUTPUT chains "
                              "for all services it renders on the IP provided by --smartstack-localip. 'plain' will set "
                              "up plain INPUT and OUTPUT rules from anywhere to everywhere and vice versa. 'conntrack' "
-                             "will only set up rules for NEW incoming conenctions, assuming that your default iptables "
+                             "will only set up rules for NEW incoming connections, assuming that your default iptables "
                              "ruleset allows RELATED incoming and outgoing traffic. The iptables rules will be set up "
                              "before [command] is executed.")
     parser.add_argument("--only-iptables", dest="only_iptables", default=False, action="store_true",
