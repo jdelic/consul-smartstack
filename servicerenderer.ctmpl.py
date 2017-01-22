@@ -294,7 +294,10 @@ def parse_smartstack_tags(service):
     return sv
 
 
-def _setup_iptables(services, ip, mode):
+def _setup_iptables(services, ip, mode, debug=False):
+    if debug:
+        print("========= IPTABLES RULES DEBUG =========")
+
     for svc in services:
         _extport = None
         if svc.tagvalue("smartstack:extport:"):
@@ -341,7 +344,8 @@ def _setup_iptables(services, ip, mode):
                 subprocess.check_call(["/sbin/iptables", "-C"] + input_rule)
             except subprocess.CalledProcessError as e:
                 if e.returncode == 1:
-                    print("%s: %s" % (svc.name, " ".join(["/sbin/iptables", "-A"] + input_rule)))
+                    if debug:
+                        print("%s: %s" % (svc.name, " ".join(["/sbin/iptables", "-A"] + input_rule)))
                     subprocess.call(["/sbin/iptables", "-A"] + input_rule)
             else:
                 print("%s: INPUT rule exists" % svc.name, file=sys.stderr)
@@ -350,7 +354,8 @@ def _setup_iptables(services, ip, mode):
                 subprocess.check_call(["/sbin/iptables", "-C"] + output_rule)
             except subprocess.CalledProcessError as e:
                 if e.returncode == 1:
-                    print("%s: %s" % (svc.name, " ".join(["/sbin/iptables", "-A"] + output_rule)))
+                    if debug:
+                        print("%s: %s" % (svc.name, " ".join(["/sbin/iptables", "-A"] + output_rule)))
                     subprocess.call(["/sbin/iptables", "-A"] + output_rule)
             else:
                 print("%s: OUTPUT rule exists" % svc.name, file=sys.stderr)
@@ -400,6 +405,8 @@ def main():
     parser.add_argument("--only-iptables", dest="only_iptables", default=False, action="store_true",
                         help="Use this parameter to only set up iptables rules, and not do anything else. No templates "
                              "will be rendered and no commands executed.")
+    parser.add_argument("--debug-iptables", dest="debug_iptables", default=False, action="store_true",
+                        help="Like --only-iptables, but output the rules to stdout instead of executing them.")
     parser.add_argument("-D", "--define", dest="defines", action="append", default=[],
                         help="Define a template variable for the rendering in the form 'varname=value'. 'varname' will "
                              "be added directly to the Jinja rendering context. Setting 'varname' multiple times will "
@@ -441,8 +448,8 @@ def main():
 
     context.update(add_params)
 
-    if _args.open_iptables and _args.only_iptables:
-        _setup_iptables(context["services"], context["localip"], _args.open_iptables)
+    if (_args.open_iptables and _args.only_iptables) or _args.debug_iptables:
+        _setup_iptables(context["services"], context["localip"], _args.open_iptables, debug=_args.debug_iptables)
         sys.exit(0)
 
     env = jinja2.Environment(extensions=['jinja2.ext.do'])
