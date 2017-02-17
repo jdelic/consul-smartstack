@@ -272,6 +272,11 @@ smartstack:internal         Marks services used for Smartstack configuration
 smartstack:external         Marks services that are hooked to to the external
                             load balancer via ``haproxy-external.jinja.cfg``.
 haproxy:frontend:option:OPT Allows passing *OPT* to haproxy's *option* config.
+haproxy:frontend:port:PORT  Forces haproxy to listen on PORT while sending
+                            traffic to the service's port from Consul. This
+                            allows you to fix frontend ports for dynamically
+                            assigned backend ports (like Nomad and other
+                            cluster schedulers use).
 crt:CERT                    Adds *CERT* as a SSL certificate to the
                             loadbalancer haproxy in
                             ``haproxy-external.jinja.cfg`` so it can do SNI
