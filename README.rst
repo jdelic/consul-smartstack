@@ -64,20 +64,37 @@ Command-line arguments
 template that renders into a Python script. The resulting Python script is
 meant to be executed by the ``command`` directive of consul-template's template
 configuration. The script supports a number of command-line arguments modifying
-its behaviour:
+its behaviour. It's purpose is to select a set of services from the full
+services catalog in Consul, passed into it through consul-template, pass that
+set into a Jinja2 template and execute a command.
+
+Query Syntax
+++++++++++++
+Queries are expressed as a comma-separated list of criteria which consist of
+keys (field names) from Consul's service catalog and values ((sub)strings or
+regular expressions) that must match the field's value. Regular expressions
+start with ``regex=``. Using ``--include`` or ``--exclude`` multiple times
+allows to express boolean ``OR`` semantics.
+
+Examples:
+
+.. code-block:
+
+    --include 'tags=smartstack:internal,name=regex=^xyz$'
+    --exclude tags=udp
+    --exclude ip=192.168.56.
+    --include tags=mytag,tags=myothertag,port=2323
+
 
 ====================== =======================================================
 Parameter              Description
 ====================== =======================================================
---has [tag]            Pre-filter services sent into the template to those
-                       having the specified tag.
---has-not [tag]        Pre-filter services sent into the template to those
-                       **not** having the specified tag.
---match [regexp]       Pre-filter services sent into the template to those
-                       having at least one tag matching the specified regular
-                       expression.
---no-match [regexp]    Pre-filter services sent into the template to those
-                       having no tag matching the specified regular expression.
+--add-all              Add all services to the selected set. This allows you
+                       to subtract services from the full set.
+--include [query]      Add services matching the query to the filtered set of
+                       services that is passed into the template. (see Query
+                       Syntax)
+--exclude [query]      Remove services matching the query to t
 --smartstack-localip   Set the {{localip}} template variable. (Default:
                        ``127.0.0.1``).
 --open-iptables TYPE   Execute ``iptables`` commands for all services selected
