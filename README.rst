@@ -26,9 +26,12 @@ Run Smartstack with consul and consul-template
 ----------------------------------------------
 Basic steps:
 
-* run consul with ``-config-dir=/etc/consul/services.d``
+* run consul with ``-config-dir=/etc/consul/services.d``, see
+  ``consul-template.service`` for an example systemd config file that I use.
 * register services in consul from nodes by putting service definitions in
-  ``/etc/consul/services.d``
+  ``/etc/consul/services.d`` or have Nomad /
+  [docker registrator](https://github.com/gliderlabs/registrator) do it for
+  you.
 * have consul-template listen to the service catalog by having a Python
   script pose as a ``consul-template`` template using the
   ``{{services}}`` catalog, therefor getting rerendered every time a service
@@ -45,6 +48,17 @@ Basic steps:
   and forwards traffic to apps registering themselves as consul services on
   nodes
 
+I run 3 instances of this setup in parallel on my servers, as you can see in my
+[Salt Smartstack setup](https://github.com/jdelic/saltshaker/tree/master/srv/salt/haproxy):
+
+  * One that routes (micro)services and essential services on localhost
+  * One that routes the same (micro)services and essential services on the
+    local Docker bridge interface. This allows services managed by Nomad or,
+    for example, Docker Swarm to also reach services living outside the cluster
+    edges
+  * One that routes internet-facing services to internal endpoints (a
+    common loadbalancer)
+
 
 Why not use consul-template directly for templating the haproxy configuration?
 ------------------------------------------------------------------------------
@@ -56,6 +70,9 @@ language does not support setting variables or other constructs (and the
 `developers don't want to change that <https://github.com/hashicorp/consul-template/issues/399>`_\ )
 an intermediate Python script is a good solution to provide a more expressive
 template language.
+
+consul-template now provides "Scratch storage", which are template-local
+variables. This impro
 
 
 Command-line arguments
