@@ -297,8 +297,11 @@ smartstack:mode:TYPE        The haproxy mode to use for this service. Can be
                             any haproxy supported mode. Default: ``tcp``.
 smartstack:port:PORT        An optional override for the service's IP port.
 smartstack:protocol:PROT    Used to configure the external load balancer role.
-                            Can be ``http`` or ``https`` depending on the
-                            internet-facing service.
+                            Can be ``http`` or ``https`` or ``sni`` depending
+                            on the internet-facing service. ``https`` will
+                            terminate SSL on the loadbalancer, whereas ``sni``
+                            can be used to send SSL traffic directly to the
+                            backend and terminate it there.
 smartstack:hostname:HOST    Attaches an internet-facing service to the
                             hostname HOST via the HTTP Host header or SNI.
 smartstack:internal         Marks services used for Smartstack configuration
