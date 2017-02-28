@@ -301,7 +301,9 @@ smartstack:protocol:PROT    Used to configure the external load balancer role.
                             on the internet-facing service. ``https`` will
                             terminate SSL on the loadbalancer, whereas ``sni``
                             can be used to send SSL traffic directly to the
-                            backend and terminate it there.
+                            backend and terminate it there. (loadbalancer only)
+smartstack:https-redirect   A tag that creates a haproxy rule to redirect
+                            a request over HTTP to HTTPS (loadbalancer only)
 smartstack:hostname:HOST    Attaches an internet-facing service to the
                             hostname HOST via the HTTP Host header or SNI.
 smartstack:internal         Marks services used for Smartstack configuration
@@ -324,7 +326,7 @@ crt:CERT                    Adds *CERT* as a SSL certificate to the
 License
 =======
 
-Copyright (c) 2016, Jonas Maurus
+Copyright (c) 2017, Jonas Maurus
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
