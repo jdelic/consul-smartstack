@@ -295,6 +295,8 @@ Tag                         Description
 =========================== ==================================================
 smartstack:mode:TYPE        The haproxy mode to use for this service. Can be
                             any haproxy supported mode. Default: ``tcp``.
+                            This is only used in the internal smartstack
+                            templates.
 smartstack:port:PORT        An optional override for the service's IP port.
 smartstack:protocol:PROT    Used to configure the external load balancer role.
                             Can be ``http`` or ``https`` or ``sni`` depending
