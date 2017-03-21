@@ -29,8 +29,8 @@ Basic steps:
 * run consul with ``-config-dir=/etc/consul/services.d``, see
   ``consul-template.service`` for an example systemd config file that I use.
 * register services in consul from nodes by putting service definitions in
-  ``/etc/consul/services.d`` or have Nomad /
-  [docker registrator](https://github.com/gliderlabs/registrator) do it for
+  ``/etc/consul/services.d`` or have `Nomad <https://nomadproject.io/>`__ /
+  `docker registrator <https://github.com/gliderlabs/registrator>`__ do it for
   you.
 * have consul-template listen to the service catalog by having a Python
   script pose as a ``consul-template`` template using the
