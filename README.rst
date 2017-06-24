@@ -51,13 +51,13 @@ Basic steps:
 I run 3 instances of this setup in parallel on my servers, as you can see in my
 [Salt Smartstack setup](https://github.com/jdelic/saltshaker/tree/master/srv/salt/haproxy):
 
-  * One that routes (micro)services and essential services on localhost
-  * One that routes the same (micro)services and essential services on the
-    local Docker bridge interface. This allows services managed by Nomad or,
-    for example, Docker Swarm to also reach services living outside the cluster
-    edges
-  * One that routes internet-facing services to internal endpoints (a
-    SNI-aware, optionally SSL-terminating loadbalancer)
+1. One that routes (micro)services and essential services on localhost
+2. One that routes the same (micro)services and essential services on the
+   local Docker bridge interface. This allows services managed by Nomad or,
+   for example, Docker Swarm to also reach services living outside the cluster
+   edges
+3. One that routes internet-facing services to internal endpoints (a
+   SNI-aware, optionally SSL-terminating loadbalancer)
 
 
 Why not use consul-template directly for templating the haproxy configuration?
