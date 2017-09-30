@@ -8,6 +8,9 @@ infrastructure, but not using `Nerve <https://github.com/airbnb/nerve>`_ and
 `Consul <https://consul.io/>`_ and
 `Consul-template <https://github.com/hashicorp/consul-template>`_.
 
+It provides a very expressive integration of ``consul-template`` with Jinja2
+templates that I find much better than the built-in golang templates.
+
 Summarized, Smartstack routes requests to services used by applications in a
 runtime environment by running local `haproxy <http://www.haproxy.org/>`_
 instances on each host that route tcp/udp traffic to these services.
@@ -63,16 +66,25 @@ I run 3 instances of this setup in parallel on my servers, as you can see in my
 Why not use consul-template directly for templating the haproxy configuration?
 ------------------------------------------------------------------------------
 There are limits to Golang's (and by extension consul-template's) templating
-language that make this infeasible. Much of the infrastructure in this
+language that make this too hard. Much of the infrastructure in this
 repository depends on using consul service tags to pass information from the
-service definition in Consul to haproxy. Since consul-template's templating
-language does not support setting variables or other constructs (and the
-`developers don't want to change that <https://github.com/hashicorp/consul-template/issues/399>`_\ )
-an intermediate Python script is a good solution to provide a more expressive
-template language.
+service definition in Consul to haproxy. An intermediate Python script is a
+good solution to provide a more expressive template language.
 
-consul-template now provides "Scratch storage", which are template-local
-variables. This impro
+Originally the consul-template language did not support setting variables
+or other constructs (and the `developers didn't want to change that
+<https://github.com/hashicorp/consul-template/issues/399>`_\ ).
+
+Now there is `Scratch storage
+<https://github.com/hashicorp/consul-template#scratch>`_", which are
+template-local variables. This allows you to do a lot of what this
+repository provides. I still like the flexibility of filtering the list of
+processed services through command-line arguments and the expressiveness that
+``SmartStackServiceContainer`` affords in the Jinja template. If you want to
+use consul-template's `Vault <https://vaultproject.io/>`_ integration, then
+there is a trade-off. You could render a consul-template template from a
+Jinja2 template and then invoke consul-template from ``--command`` with
+``-once``.
 
 
 Command-line arguments
