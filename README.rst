@@ -76,7 +76,7 @@ or other constructs (and the `developers didn't want to change that
 <https://github.com/hashicorp/consul-template/issues/399>`_\ ).
 
 Now there is `Scratch storage
-<https://github.com/hashicorp/consul-template#scratch>`_", which are
+<https://github.com/hashicorp/consul-template#scratch>`_, which are
 template-local variables. This allows you to do a lot of what this
 repository provides. I still like the flexibility of filtering the list of
 processed services through command-line arguments and the expressiveness that
