@@ -8,7 +8,7 @@ which supersedes a lot of the functionality offered in this repository. Using
 Consul Connect will also offer you automatic PKI management, traffic encryption
 and endpoint validation and a degree of service authentication. The external
 load balancer code is still useful, but with the Consul integration in HAProxy
-1.8, you can probably skip a lot of the complexity. YMMV. IANAL. etc.**
+1.8, you can probably skip a lot of the complexity. YMMV. IANAL. etc.
 
 This repository contains a recipe for running a AirBnB
 `Smartstack <http://nerds.airbnb.com/smartstack-service-discovery-cloud/>`_\ -like
