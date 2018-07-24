@@ -1,6 +1,14 @@
 Consul Smartstack
 =================
 
+**Please note that Hashicorp released `Consul 1.2 "Service Mesh"
+<https://www.hashicorp.com/blog/consul-1-2-service-mesh>`_, which supersedes a
+lot of the functionality offered in this repository. Using Consul Connect will
+also offer you automatic PKI management, traffic encryption and endpoint
+validation and a degree of service authentication. The external load balancer
+code is still useful, but with the Consul integration in HAProxy 1.8, you can
+probably skip a lot of the complexity. YMMV. IANAL. etc.**
+
 This repository contains a recipe for running a AirBnB
 `Smartstack <http://nerds.airbnb.com/smartstack-service-discovery-cloud/>`_\ -like
 infrastructure, but not using `Nerve <https://github.com/airbnb/nerve>`_ and
@@ -24,6 +32,8 @@ I have extracted this from
 `my Saltstack configuration <https://github.com/jdelic/saltshaker>`_ where I
 use it to push services out to nodes.
 
+It also contains a template for a HAProxy load balancer that offers services
+to the internet (``haproxy-external.conf``).
 
 Run Smartstack with consul and consul-template
 ----------------------------------------------
