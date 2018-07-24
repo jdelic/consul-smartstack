@@ -1,7 +1,8 @@
 Consul Smartstack
 =================
 
-**Please note that Hashicorp released 
+**Deprecation Notice**
+Hashicorp released 
 `Consul 1.2 "Service Mesh" <https://www.hashicorp.com/blog/consul-1-2-service-mesh>`_, 
 which supersedes a lot of the functionality offered in this repository. Using
 Consul Connect will also offer you automatic PKI management, traffic encryption
