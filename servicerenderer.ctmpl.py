@@ -482,7 +482,7 @@ def main():
     parser.add_argument("--only-iptables", dest="only_iptables", default=False, action="store_true",
                         help="Use this parameter to only set up iptables rules, and not do anything else. No templates "
                              "will be rendered and no commands executed.")
-    parser.add_argument("--debug-iptables", dest="debug_iptables", default=None, choices=["conntrack", "plain"],
+    parser.add_argument("--debug-iptables", dest="debug_iptables", default=False, action="store_true",
                         help="Like --only-iptables, but output the rules to stdout instead of executing them.")
     parser.add_argument("-D", "--define", dest="defines", action="append", default=[],
                         help="Define a template variable for the rendering in the form 'varname=value'. 'varname' will "
