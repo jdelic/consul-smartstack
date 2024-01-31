@@ -45,6 +45,8 @@ import ipaddress
 import os
 import re
 import sys
+from typing import Dict, Union, List, Optional, Set, Self, Iterator, KeysView, Tuple, Any
+
 import jinja2
 import argparse
 import subprocess
@@ -53,9 +55,11 @@ import contextlib
 from collections import Iterable
 
 
+t_servicedict = Dict[str, Union[str, int, List[str]]]
+
 # The Go template is in the comments (yes, this works and therefor keeps
 # IntelliJ's Python plugin from freaking out)
-_services = [
+_services: List[t_servicedict] = [
     # {{ range services }}
     #    {{ range service .Name }}
     {
@@ -74,42 +78,42 @@ _services = [
 _args = None
 
 
-class SmartstackService(object):
-    def __init__(self, servicedict, port=None, mode=None):
+class SmartstackService:
+    def __init__(self, servicedict: t_servicedict, port: Optional[int] = None, mode: Optional[str] = None) -> None:
         self._port = port
         self.mode = mode
         self.svc = servicedict
 
     @property
-    def port(self):
+    def port(self) -> int:
         if self._port:
             return self._port
         else:
             return self.svc["port"]
 
     @port.setter
-    def port(self, value):
+    def port(self, value) -> None:
         self._port = value
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self.svc["name"]
 
     @property
-    def ip(self):
+    def ip(self) -> str:
         return self.svc["ip"]
 
     @property
-    def tags(self):
+    def tags(self) -> List[str]:
         return self.svc["tags"]
 
-    def tagvalue(self, tagpart):
+    def tagvalue(self, tagpart: str) -> Union[str, None]:
         for tag in self.svc["tags"]:
             if tag.startswith(tagpart):
                 return tag[len(tagpart):]
         return None
 
-    def tagvalue_set(self, tagpart):
+    def tagvalue_set(self, tagpart: str) -> Set[str]:
         res = set()
         for tag in self.svc["tags"]:
             if tag.startswith(tagpart):
@@ -117,23 +121,25 @@ class SmartstackService(object):
         return res
 
 
-class SmartstackServiceContainer(object):
-    def __init__(self, services=None, all_services=None, grouped_by=None, group_by_type=None,
-                 filtered_to=None):
+class SmartstackServiceContainer:
+    def __init__(self, services: Optional[Union[Dict[str, t_servicedict], List[t_servicedict]]] = None,
+                 all_services: Optional[List[t_servicedict]] = None, grouped_by: Optional[List[str]] = None,
+                 group_by_type: Optional[List[str]] = None,
+                 filtered_to: Optional[List[str]] = None):
         self.services = services if services is not None else all_services or []
         self.all_services = all_services
         self.grouped_by = grouped_by or []
         self.group_by_type = group_by_type or []
         self.filtered_to = filtered_to or []
 
-    def add(self, service):
+    def add(self, service: t_servicedict) -> None:
         if isinstance(self.services, list):
             self.services.append(service)
         else:
             raise ValueError(".add() can't be called on SmartstackServiceContainers that contain a grouping dict (%s)" %
                              repr(self))
 
-    def iter_services(self, all=False):
+    def iter_services(self, all: bool = False):
         if all:
             for ss in self.all_services:
                 yield ss
@@ -147,40 +153,40 @@ class SmartstackServiceContainer(object):
             for ss in self.services:
                 yield ss
 
-    def ungroup(self):
+    def ungroup(self) -> Self:
         return SmartstackServiceContainer(all_services=self.all_services)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[t_servicedict]:
         return self.iter_services()
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str) -> Union[List[t_servicedict], t_servicedict]:
         if isinstance(self.services, dict):
             if item not in self.services:
                 raise KeyError("%s not in %s (%s)" % (item, type(self.services), repr(self)))
         return self.services[item]
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str) -> Union[List[t_servicedict], t_servicedict]:
         if item not in self.services:
             raise KeyError("%s not in %s (%s)" % (item, type(self.services), repr(self)))
         return self.services[item]
 
-    def __contains__(self, item):
+    def __contains__(self, item: str) -> bool:
         return item in self.services
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "SmartstackServiceContainer<%s services of %s known services, grouped: %s, group_by_type: %s, " \
                "filtered_to: %s>" % (len(list(self.iter_services())), len(self.all_services),
                                      ".".join(self.grouped_by) if self.grouped_by is not None else "None",
                                      ".".join(self.group_by_type) if self.group_by_type is not None else "None",
                                      ".".join(self.filtered_to if self.filtered_to is not None else "None"))
 
-    def keys(self):
-        res = self.services.keys()
+    def keys(self) -> List[str]:
+        res = list(self.services.keys())
         if "__untagged" in res:
-            del res["__untagged"]
+            res.remove("__untagged")
         return res
 
-    def items(self):
+    def items(self) -> Union[Iterable[Tuple[int, t_servicedict], Tuple[str, Union[t_servicedict, List[t_servicedict]]]]]:
         return self.services.items()
 
     def count(self):
@@ -432,6 +438,21 @@ def _setup_iptables(services, ips, mode, debug=False, verbose=False):
                     else:
                         if verbose:
                             print("%s: OUTPUT rule exists" % svc.name, file=sys.stderr)
+
+
+def check_rule_components(table: str, chain: str, components: list) -> bool:
+    try:
+        nft_output = subprocess.check_output(
+            ["nft", "list", "chain", table, chain], stderr=subprocess.STDOUT,
+            text=True
+        )
+    except subprocess.CalledProcessError as exc:
+        print(f"Error running nft command: {exc.output}")
+        return False
+
+    if all(component in nft_output for component in components):
+        return True
+    return False
 
 
 def _setup_nftables(services, ips, mode, input_chainname, output_chainname, debug=False, verbose=False):
