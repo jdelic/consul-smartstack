@@ -35,8 +35,8 @@
 # {% endfor %}
 # */}}
 #
-# If run as root, it can also call /sbin/iptables and create all necessary
-# INPUT and OUTPUT rules for incoming connections based of the
+# If run as root, it can also call /sbin/iptables or /sbin/nftables and create
+# all necessary INPUT and OUTPUT rules for incoming connections based of the
 # smartstack:protocol and smartstack:extport tags.
 #
 import ipaddress
@@ -530,16 +530,19 @@ def _setup_nftables(services: List[SmartstackService], ips: List[str], mode: str
                 if mode == "plain":
                     # Tuples in these arrays will be used to check for the rule in nft output, but only tuples
                     input_rule = ["rule", "ip6" if isinstance(ipaddr, ipaddress.IPv6Address) else "ip",
-                                  "filter", input_chainname, ("saddr", "0/0"),
+                                  "filter", input_chainname,
+                                  ("saddr", "::/0" if isinstance(ipaddr, ipaddress.IPv6Address) else "0/0"),
                                   ("daddr", f"{ip}/128" if isinstance(ipaddr, ipaddress.IPv6Address) else f"{ip}/32"),
                                   (prot, "dport", str(ruleport)), ("accept",)]
                     output_rule = ["rule", "ip6" if isinstance(ipaddr, ipaddress.IPv6Address) else "ip",
                                    "filter", output_chainname,
                                    ("saddr", f"{ip}/128" if isinstance(ipaddr, ipaddress.IPv6Address) else f"{ip}/32"),
-                                   ("daddr", "0/0"), (prot, "sport", str(ruleport)), ("accept",)]
+                                   ("daddr", "::/0" if isinstance(ipaddr, ipaddress.IPv6Address) else "0/0"),
+                                   (prot, "sport", str(ruleport)), ("accept",)]
                 elif mode == "conntrack":
                     input_rule = ["rule", "ip6" if isinstance(ipaddr, ipaddress.IPv6Address) else "ip",
-                                  "filter", input_chainname, ("saddr", "0/0"),
+                                  "filter", input_chainname,
+                                  ("saddr", "::/0" if isinstance(ipaddr, ipaddress.IPv6Address) else "0/0"),
                                   ("daddr", f"{ip}/128" if isinstance(ipaddr, ipaddress.IPv6Address) else f"{ip}/32"),
                                   (prot, "dport", str(ruleport)), ("ct", "state", "new"), ("accept",)]
                     output_rule = None
@@ -638,7 +641,7 @@ def main() -> None:
                              "before [command] is executed.")
     parser.add_argument("--nftables-input-chain", dest="nftables_input_chain", default="input",
                         help="The name of the input filter chain to use for nftables.")
-    parser.add_argument("--nftables-output-chain", dest="nftables_output_chain", default="input",
+    parser.add_argument("--nftables-output-chain", dest="nftables_output_chain", default="output",
                         help="The name of the output filter chain to use for nftables.")
     parser.add_argument("--only-nftables", dest="only_nftables", default=False, action="store_true",
                         help="Use this parameter to only set up iptables rules, and not do anything else. No templates "
@@ -668,17 +671,17 @@ def main() -> None:
         print("ERROR: setting up iptables and nftables at the same time makes no sense. Choose one.")
         sys.exit(1)
 
-    for ip in _args.localip:
+    for ip in _args.localips:
         try:
             ipaddress.ip_address(ip)
         except ValueError:
             print("ERROR: %s is not a valid ip address" % str(ip))
             sys.exit(1)
 
-    if len(_args.localip) == 0:
+    if len(_args.localips) == 0:
         if _args.verbose:
             print("No local ip addres supplied. Using ipv4 localhost (127.0.0.1).")
-        _args.localip.append("127.0.0.1")
+        _args.localips.append("127.0.0.1")
 
     add_params = {}
     # convert defines from varname=value to a dict
@@ -704,7 +707,7 @@ def main() -> None:
 
     context = {
         "services": SmartstackServiceContainer(all_services=parsed),
-        "localips": _args.localip,
+        "localips": _args.localips,
     }
 
     context.update(add_params)
